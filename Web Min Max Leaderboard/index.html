@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Masai Games</title>
+    <style>
+      /* Add your styles here */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+h1{
+  border: 2px;
+}
+
+#min, #max, #score, #keypad {
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+button {
+    margin: 5px;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+    </style>
+  </head>
+  <body>
+    <div id="min"></div>
+    <div id="max"></div>
+    <div id="score">
+    </div>
+    <div id="keypad">
+      <button>0</button>
+      <button>1</button>
+      <button>2</button>
+      <button>3</button>
+      <button>4</button>
+      <button>5</button>
+      <button>6</button>
+      <button>7</button>
+      <button>8</button>
+      <button>9</button>
+    </div>
+    <button id="enter">ENTER</button>
+  </body>
+  <script>
+    // Add your JavaScript code here
+document.addEventListener("DOMContentLoaded", function () {
+    // Your code goes here
+
+    let minScore = Infinity;
+    let maxScore = -Infinity;
+    let currentScore = 0;
+
+    const minDiv = document.getElementById("min");
+    const maxDiv = document.getElementById("max");
+    const scoreDiv = document.getElementById("score");
+    const keypadButtons = document.querySelectorAll("#keypad button");
+    const enterButton = document.getElementById("enter");
+
+    function updateScore(value) {
+        currentScore = value;
+        scoreDiv.textContent = currentScore;
+    }
+
+    function updateMinMax() {
+        if (currentScore < minScore) {
+            minScore = currentScore;
+            minDiv.textContent = `Min: ${minScore}`;
+        }
+
+        if (currentScore > maxScore) {
+            maxScore = currentScore;
+            maxDiv.textContent = `Max: ${maxScore}`;
+        }
+    }
+
+    function handleKeypadButtonClick(event) {
+        const buttonValue = parseInt(event.target.textContent);
+        updateScore(currentScore * 10 + buttonValue);
+    }
+
+    function handleEnterButtonClick() {
+        if (currentScore !== 0) {
+            updateMinMax();
+            updateScore(0);
+        }
+    }
+
+    keypadButtons.forEach(button => {
+        button.addEventListener("click", handleKeypadButtonClick);
+    });
+
+    enterButton.addEventListener("click", handleEnterButtonClick);
+});
+
+
+  </script>
+</html>

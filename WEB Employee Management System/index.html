@@ -1,103 +1,130 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Masai Games</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee Dashboard</title>
     <style>
-      /* Add your styles here */
-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-h1{
-  border: 2px;
-}
-
-#min, #max, #score, #keypad {
-    margin: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-}
-
-button {
-    margin: 5px;
-    padding: 5px 10px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
+      /* Write all necessery styles here  */
     </style>
   </head>
   <body>
-    <div id="min"></div>
-    <div id="max"></div>
-    <div id="score">
+    <div id="create">
+      <h1>Hire a new Employee</h1>
+      <form>
+        <input placeholder="Employee Name" id="name" type="text" />
+        <select id="job">
+          <option value="">Select Job Role</option>
+          <option value="SDE-1">SDE-1</option>
+          <option value="SDE-2">SDE-2</option>
+          <option value="HR Manager">HR Manager</option>
+          <option value="SEO Specialist">SEO Specialist</option>
+          <option value="CA">CA</option>
+        </select>
+        <select id="department">
+          <option value="">Select Department</option>
+          <option value="Engineering">Engineering</option>
+          <option value="HR">HR</option>
+          <option value="Marketing">Marketing</option>
+          <option value="Finance">Finance</option>
+        </select>
+        <input type="number" id="salary" placeholder="Monthly salary" />
+        <input
+          type="number"
+          id="experience"
+          placeholder="Prev Work Experience in Years"
+        />
+        <input placeholder="Contact Email" id="email" type="email" />
+        <input type="submit" value="Hire" />
+      </form>
     </div>
-    <div id="keypad">
-      <button>0</button>
-      <button>1</button>
-      <button>2</button>
-      <button>3</button>
-      <button>4</button>
-      <button>5</button>
-      <button>6</button>
-      <button>7</button>
-      <button>8</button>
-      <button>9</button>
-    </div>
-    <button id="enter">ENTER</button>
+    <h1>Total Active Employee:- <span id="total-employee">0</span></h1>
+    <h1>Total Cost in Salary:- <span id="total-salary">0</span></h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Employee Name</th>
+          <th>Job Role</th>
+          <th>Department</th>
+          <th>salary</th>
+          <th>Contact Email</th>
+          <th>Work Experience</th>
+          <th>Role Type</th>
+          <th>Fire Employee</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Append all the rows here  -->
+      </tbody>
+    </table>
   </body>
   <script>
-    // Add your JavaScript code here
-document.addEventListener("DOMContentLoaded", function () {
-    // Your code goes here
+    // write all your necessery scripts here 
 
-    let minScore = Infinity;
-    let maxScore = -Infinity;
-    let currentScore = 0;
+    // Write all the JS Code related to Home Page Here 
 
-    const minDiv = document.getElementById("min");
-    const maxDiv = document.getElementById("max");
-    const scoreDiv = document.getElementById("score");
-    const keypadButtons = document.querySelectorAll("#keypad button");
-    const enterButton = document.getElementById("enter");
+document.addEventListener('DOMContentLoaded', function () {
+  let totalEmployees = 0;
+  let totalSalary = 0;
 
-    function updateScore(value) {
-        currentScore = value;
-        scoreDiv.textContent = currentScore;
+  let form = document.querySelector('form');
+  let tableBody = document.querySelector('tbody');
+  let totalEmployeeSpan = document.getElementById('total-employee');
+  let totalSalarySpan = document.getElementById('total-salary');
+
+  form.addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    let name = document.getElementById('name').value;
+    let job = document.getElementById('job').value;
+    let department = document.getElementById('department').value;
+    let salary = parseFloat(document.getElementById('salary').value);
+    let experience = parseFloat(document.getElementById('experience').value);
+    let email = document.getElementById('email').value;
+
+    if (!name || !job || !department || isNaN(salary) || !email || isNaN(experience)) {
+      alert('Please fill in all the fields.');
+      return;
     }
 
-    function updateMinMax() {
-        if (currentScore < minScore) {
-            minScore = currentScore;
-            minDiv.textContent = `Min: ${minScore}`;
-        }
+    let roleType = experience > 5 ? 'Senior' : 'Junior';
 
-        if (currentScore > maxScore) {
-            maxScore = currentScore;
-            maxDiv.textContent = `Max: ${maxScore}`;
-        }
-    }
+    totalEmployees++;
+    totalSalary += salary;
 
-    function handleKeypadButtonClick(event) {
-        const buttonValue = parseInt(event.target.textContent);
-        updateScore(currentScore * 10 + buttonValue);
-    }
+    totalEmployeeSpan.textContent = totalEmployees;
+    totalSalarySpan.textContent = totalSalary;
 
-    function handleEnterButtonClick() {
-        if (currentScore !== 0) {
-            updateMinMax();
-            updateScore(0);
-        }
-    }
+    let row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${name}</td>
+      <td>${job}</td>
+      <td>${department}</td>
+      <td>${salary}</td>
+      <td>${email}</td>
+      <td>${experience}</td>
+      <td>${roleType}</td>
+      <td class="delete" onclick="deleteEmployee(this)">Delete</td>
+    `;
 
-    keypadButtons.forEach(button => {
-        button.addEventListener("click", handleKeypadButtonClick);
-    });
+    tableBody.appendChild(row);
 
-    enterButton.addEventListener("click", handleEnterButtonClick);
+    form.reset();
+  });
+
+  function deleteEmployee(row) {
+    let rowIndex = row.parentNode.rowIndex;
+    let salaryToDelete = parseFloat(tableBody.rows[rowIndex].cells[2].textContent);
+    totalEmployees--;
+    totalSalary -= salaryToDelete;
+
+    totalEmployeeSpan.textContent = totalEmployees;
+    totalSalarySpan.textContent = totalSalary;
+
+    tableBody.deleteRow(rowIndex);
+  }
 });
-
 
   </script>
 </html>
